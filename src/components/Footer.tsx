@@ -11,7 +11,7 @@ export const Footer = () => {
             <div className="flex items-center gap-2 font-semibold text-lg">
               <Heart className="h-6 w-6 text-primary" />
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Sourcify
+                MindCare
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -101,7 +101,7 @@ export const Footer = () => {
             Please consult with healthcare professionals for proper assessment and treatment.
           </p>
           <p className="text-xs text-muted-foreground text-center mt-2">
-            © 2025 Sourcify by Team CodeCrush. All rights reserved.
+            © 2025 MindCare by Team CodeCrush. All rights reserved.
           </p>
         </div>
       </div>

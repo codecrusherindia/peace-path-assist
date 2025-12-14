@@ -15,7 +15,7 @@ export const Navigation = () => {
           <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
             <Heart className="h-6 w-6 text-primary" />
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Sourcify
+              MindCare
             </span>
           </Link>
 
