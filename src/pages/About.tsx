@@ -5,42 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, Target, Users, Lightbulb, Send, Award, Code, Briefcase } from "lucide-react";
-
-const teamMembers = [
-  {
-    name: "R Aditya Murty",
-    role: "Team Leader",
-    focus: "Product Vision & Strategy",
-    color: "primary"
-  },
-  {
-    name: "S Piyush Mishra",
-    role: "Developer",
-    focus: "AI & Backend Development",
-    color: "accent"
-  },
-  {
-    name: "Piyush Dwivedi",
-    role: "Developer",
-    focus: "Frontend & UX Design",
-    color: "secondary"
-  },
-  {
-    name: "Prakarsh Yadav",
-    role: "Developer",
-    focus: "Integration & Testing",
-    color: "success"
-  }
-];
-
+const teamMembers = [{
+  name: "R Aditya Murty",
+  role: "Team Leader",
+  focus: "Product Vision & Strategy",
+  color: "primary"
+}, {
+  name: "S Piyush Mishra",
+  role: "Developer",
+  focus: "AI & Backend Development",
+  color: "accent"
+}, {
+  name: "Piyush Dwivedi",
+  role: "Developer",
+  focus: "Frontend & UX Design",
+  color: "secondary"
+}, {
+  name: "Prakarsh Yadav",
+  role: "Developer",
+  focus: "Integration & Testing",
+  color: "success"
+}];
 const About = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
   };
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Navigation />
 
       {/* Hero */}
@@ -147,16 +138,14 @@ const About = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {teamMembers.map((member, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+            {teamMembers.map((member, index) => <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
                 <div className={`bg-${member.color}/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4`}>
                   <Users className={`h-10 w-10 text-${member.color}`} />
                 </div>
                 <h3 className="font-semibold mb-1">{member.name}</h3>
                 <p className={`text-sm text-${member.color} font-medium mb-2`}>{member.role}</p>
                 <p className="text-xs text-muted-foreground">{member.focus}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -174,12 +163,7 @@ const About = () => {
                 Healthcare Track • OSMO Hackathon
               </div>
               <h2 className="text-3xl font-bold">Built for Impact</h2>
-              <p className="text-lg text-muted-foreground">
-                This project was developed as part of the OSMO hackathon focused on leveraging technology to
-                solve real-world healthcare challenges in India. Our goal is to demonstrate how AI can
-                be used responsibly to increase access to mental health screening while maintaining
-                clinical validity and user privacy.
-              </p>
+              <p className="text-lg text-muted-foreground">This project was developed as part of the COSMO hackathon focused on leveraging technology to solve real-world healthcare challenges in India. Our goal is to demonstrate how AI can be used responsibly to increase access to mental health screening while maintaining clinical validity and user privacy.</p>
               <p className="text-lg text-muted-foreground">
                 We're committed to continuing development beyond the hackathon to create a production-
                 ready solution that can make a real difference in people's lives. Our solution is 
@@ -221,12 +205,7 @@ const About = () => {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Message</label>
-                  <Textarea
-                    placeholder="Tell us more..."
-                    rows={6}
-                    required
-                    className="resize-none"
-                  />
+                  <Textarea placeholder="Tell us more..." rows={6} required className="resize-none" />
                 </div>
 
                 <Button type="submit" className="w-full rounded-full" size="lg">
@@ -240,8 +219,6 @@ const About = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
