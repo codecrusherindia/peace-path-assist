@@ -314,8 +314,55 @@ const Business = () => {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Impact Section */}
       <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Impact & Benefits</h2>
+            <p className="text-lg text-muted-foreground">
+              Creating meaningful change across multiple dimensions
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="p-8 hover:shadow-lg transition-shadow bg-gradient-to-br from-primary/5 to-background">
+              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Social Impact</h3>
+              <p className="text-muted-foreground text-sm">
+                Early detection prevents symptom escalation, reduces stigma through private screening, 
+                and makes mental health care accessible to rural and underserved populations across India.
+              </p>
+            </Card>
+
+            <Card className="p-8 hover:shadow-lg transition-shadow bg-gradient-to-br from-accent/5 to-background">
+              <div className="bg-accent/10 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                <DollarSign className="h-8 w-8 text-accent" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Economic Value</h3>
+              <p className="text-muted-foreground text-sm">
+                Low-cost deployment saves clinician time, enables efficient resource allocation, 
+                and creates scalable solutions that reach millions without proportional cost increases.
+              </p>
+            </Card>
+
+            <Card className="p-8 hover:shadow-lg transition-shadow bg-gradient-to-br from-success/5 to-background">
+              <div className="bg-success/10 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                <Leaf className="h-8 w-8 text-success" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4">Environmental Benefits</h3>
+              <p className="text-muted-foreground text-sm">
+                Fully digital solution eliminates paper-based assessments, reduces travel emissions 
+                from physical visits, and minimizes healthcare facility resource consumption.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <Card className="p-12 text-center bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
