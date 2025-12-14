@@ -49,7 +49,7 @@ const About = () => {
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             About{" "}
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Sourcify
+              MindCare
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
