@@ -132,7 +132,7 @@ const B2BDashboardDemo = () => {
                   <ul className="text-sm text-muted-foreground space-y-2">
                     <li className="flex items-start gap-2">
                       <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
-                      <span>**Urgent:** 5 patients in Inpatient Cardiology require immediate review.</span>
+                      <span>Urgent: 5 patients in Inpatient Cardiology require immediate review.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <TrendingUp className="h-4 w-4 text-accent mt-0.5" />
