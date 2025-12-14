@@ -16,6 +16,7 @@ import ApiDemo from "./pages/ApiDemo";
 import CorporateDemo from "./pages/CorporateDemo";
 import FreemiumDemo from "./pages/FreemiumDemo";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/chatbot" element={<Chatbot />} />
