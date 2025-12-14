@@ -30,7 +30,7 @@ const B2BDashboardDemo = () => {
             <Building2 className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-2xl font-bold">MindCare Partner Licensing Demo: The Integrated Triage Solution</h1>
-              <p className="text-muted-foreground">Showcasing the **White-Label** and **Bulk Screening** capabilities for City General Hospital</p>
+              <p className="text-muted-foreground">Showcasing the White-Label and Bulk Screening capabilities for City General Hospital</p>
             </div>
           </div>
 
@@ -134,15 +134,15 @@ const B2BDashboardDemo = () => {
                   <ul className="text-sm text-muted-foreground space-y-2">
                     <li className="flex items-start gap-2">
                       <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
-                      <span>**EHR Integration:** High-risk patients are automatically flagged in your patient record system.</span>
+                      <span>Urgent: 5 patients in Inpatient Cardiology require immediate review.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <TrendingUp className="h-4 w-4 text-accent mt-0.5" />
-                      <span>**Efficiency:** Triage time reduced from 30 minutes to 5 minutes per patient.</span>
+                      <span>Efficiency: Triage time reduced from 30 minutes to 5 minutes per patient.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-success mt-0.5" />
-                      <span>**White-Label:** Seamless patient experience under your organization's name.</span>
+                      <span>White-Label: Seamless patient experience under your organization's name.</span>
                     </li>
                   </ul>
                 </div>
@@ -152,7 +152,7 @@ const B2BDashboardDemo = () => {
 
           <Card className="p-6 mt-8 bg-primary/10">
             <p className="text-center text-sm text-primary/80">
-              **License Model Note:** This dashboard represents our tiered annual subscription model, supporting a high volume of patient assessments and full system integration.
+              License Model Note: This dashboard represents our tiered annual subscription model, supporting a high volume of patient assessments and full system integration.
             </p>
           </Card>
         </div>
