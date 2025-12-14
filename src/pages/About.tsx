@@ -11,7 +11,7 @@ const teamMembers = [{
   focus: "Product Vision & Strategy",
   color: "primary"
 }, {
-  name: "S Piyush Mishra",
+  name: "Piyush Mishra",
   role: "Developer",
   focus: "AI & Backend Development",
   color: "accent"
