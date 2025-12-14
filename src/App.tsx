@@ -40,7 +40,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/api-demo" element={<ApiDemo />} />
           <Route path="/corporate-demo" element={<CorporateDemo />} />
-          <Route path="/B2B-Business-demo" element={<CorporateDemo />} />
+          <Route path="/B2B-Dashboard-demo" element={<B2BDashboardDemo />} />
           <Route path="/freemium-demo" element={<FreemiumDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
