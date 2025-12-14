@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Send, Languages, Download, AlertCircle, CheckCircle2, AlertTriangle, User, Dumbbell, Brain, Heart, Focus, Wind } from "lucide-react";
+import { Send, Languages, Download, AlertCircle, CheckCircle2, AlertTriangle, User, Dumbbell, Brain, Heart, Focus, Wind, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type Message = {
   role: "bot" | "user";
@@ -39,24 +40,28 @@ const gad7Questions = [
 
 const wellnessExercises = [
   {
+    id: "focus",
     icon: Focus,
     title: "5-Minute Focus Drill",
     description: "Improve concentration with simple attention exercises",
     steps: ["Find a quiet spot", "Focus on your breath for 5 minutes", "Count each exhale up to 10, then restart"]
   },
   {
+    id: "box",
     icon: Wind,
     title: "Box Breathing",
     description: "Reduce anxiety with controlled breathing",
     steps: ["Breathe in for 4 seconds", "Hold for 4 seconds", "Exhale for 4 seconds", "Hold for 4 seconds", "Repeat 4 times"]
   },
   {
+    id: "grounding",
     icon: Brain,
     title: "Grounding Exercise",
     description: "5-4-3-2-1 technique for stress relief",
     steps: ["Name 5 things you can see", "4 things you can touch", "3 things you can hear", "2 things you can smell", "1 thing you can taste"]
   },
   {
+    id: "muscle",
     icon: Heart,
     title: "Progressive Muscle Relaxation",
     description: "Release physical tension",
@@ -217,9 +222,9 @@ const Chatbot = () => {
       case "low":
         return "Your responses indicate minimal symptoms. This is a positive sign, but remember that mental health is an ongoing journey.";
       case "moderate":
-        return "Your responses indicate moderate emotional distress. This is common and manageable with the right support and techniques.";
+        return "Your responses suggest you may be experiencing symptoms consistent with mild to moderate depression or generalized anxiety disorder (GAD). These are common and manageable conditions with the right support and techniques.";
       case "high":
-        return "Your responses indicate significant distress. We strongly recommend speaking with a mental health professional as soon as possible.";
+        return "Your responses indicate significant distress. You may be experiencing symptoms of major depressive disorder or severe anxiety. We strongly recommend speaking with a mental health professional as soon as possible.";
       default:
         return "";
     }
@@ -343,41 +348,42 @@ const Chatbot = () => {
                     </div>
                     <h2 className="text-2xl font-bold">Connect with a Mental Health Expert</h2>
                     <p className="text-muted-foreground max-w-lg mx-auto">
-                      Our network of licensed professionals is ready to provide personalized guidance based on your assessment results.
+                      Choose the type of professional you'd like to connect with. Click to view available experts.
                     </p>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-4">
-                    <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
-                      <h4 className="font-semibold mb-2">Psychiatrist</h4>
-                      <p className="text-sm text-muted-foreground mb-3">Medical doctor specializing in mental health</p>
-                      <Badge className="bg-primary/10 text-primary">Available Now</Badge>
-                    </Card>
-                    <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
-                      <h4 className="font-semibold mb-2">Psychologist</h4>
-                      <p className="text-sm text-muted-foreground mb-3">Therapy and counseling specialist</p>
-                      <Badge className="bg-accent/10 text-accent">Book Appointment</Badge>
-                    </Card>
-                    <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer">
-                      <h4 className="font-semibold mb-2">Counselor</h4>
-                      <p className="text-sm text-muted-foreground mb-3">Supportive guidance and coping strategies</p>
-                      <Badge className="bg-secondary/10 text-secondary">Chat Available</Badge>
-                    </Card>
+                    <Link to="/experts?type=psychiatrist">
+                      <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
+                        <h4 className="font-semibold mb-2">Psychiatrist</h4>
+                        <p className="text-sm text-muted-foreground mb-3">Medical doctor specializing in mental health</p>
+                        <Badge className="bg-primary/10 text-primary">View Doctors →</Badge>
+                      </Card>
+                    </Link>
+                    <Link to="/experts?type=psychologist">
+                      <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
+                        <h4 className="font-semibold mb-2">Psychologist</h4>
+                        <p className="text-sm text-muted-foreground mb-3">Therapy and counseling specialist</p>
+                        <Badge className="bg-accent/10 text-accent">View Experts →</Badge>
+                      </Card>
+                    </Link>
+                    <Link to="/experts?type=counselor">
+                      <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
+                        <h4 className="font-semibold mb-2">Counselor</h4>
+                        <p className="text-sm text-muted-foreground mb-3">Supportive guidance and coping strategies</p>
+                        <Badge className="bg-secondary/10 text-secondary">View Counselors →</Badge>
+                      </Card>
+                    </Link>
                   </div>
 
-                  <div className="bg-muted/50 rounded-lg p-4 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      All consultations are confidential and conducted by verified professionals.
-                    </p>
-                  </div>
-
-                  <div className="flex justify-center gap-4">
+                  <div className="flex flex-col items-center gap-4">
                     <Button variant="outline" onClick={() => setSelectedAction(null)}>
                       ← Back to Options
                     </Button>
-                    <Button className="rounded-full">
-                      Schedule Consultation
-                    </Button>
+                    <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      Sign in to save your results
+                    </Link>
                   </div>
                 </Card>
               )}
@@ -397,25 +403,20 @@ const Chatbot = () => {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     {wellnessExercises.map((exercise, index) => (
-                      <Card key={index} className="p-5 hover:shadow-md transition-shadow">
-                        <div className="flex items-start gap-4">
-                          <div className="bg-accent/10 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                            <exercise.icon className="h-6 w-6 text-accent" />
+                      <Link key={index} to={`/exercise?id=${exercise.id}`}>
+                        <Card className="p-5 hover:shadow-md transition-shadow h-full">
+                          <div className="flex items-start gap-4">
+                            <div className="bg-accent/10 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                              <exercise.icon className="h-6 w-6 text-accent" />
+                            </div>
+                            <div className="space-y-2">
+                              <h4 className="font-semibold">{exercise.title}</h4>
+                              <p className="text-sm text-muted-foreground">{exercise.description}</p>
+                              <Badge variant="outline" className="text-accent">Start Session →</Badge>
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <h4 className="font-semibold">{exercise.title}</h4>
-                            <p className="text-sm text-muted-foreground">{exercise.description}</p>
-                            <ul className="text-xs text-muted-foreground space-y-1">
-                              {exercise.steps.map((step, stepIndex) => (
-                                <li key={stepIndex} className="flex items-start gap-2">
-                                  <span className="text-accent">{stepIndex + 1}.</span>
-                                  <span>{step}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </Card>
+                        </Card>
+                      </Link>
                     ))}
                   </div>
 
@@ -425,13 +426,14 @@ const Chatbot = () => {
                     </p>
                   </div>
 
-                  <div className="flex justify-center gap-4">
+                  <div className="flex flex-col items-center gap-4">
                     <Button variant="outline" onClick={() => setSelectedAction(null)}>
                       ← Back to Options
                     </Button>
-                    <Button className="rounded-full bg-accent hover:bg-accent/90">
-                      Start Guided Session
-                    </Button>
+                    <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
+                      <LogIn className="h-4 w-4" />
+                      Sign in to track your progress
+                    </Link>
                   </div>
                 </Card>
               )}
