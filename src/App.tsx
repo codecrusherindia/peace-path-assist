@@ -14,6 +14,7 @@ import ExerciseDrill from "./pages/ExerciseDrill";
 import Auth from "./pages/Auth";
 import ApiDemo from "./pages/ApiDemo";
 import CorporateDemo from "./pages/CorporateDemo";
+import B2BDashboardDemo from "./pages/B2BDashboardDemo";
 import FreemiumDemo from "./pages/FreemiumDemo";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/api-demo" element={<ApiDemo />} />
           <Route path="/corporate-demo" element={<CorporateDemo />} />
+          <Route path="/B2B-Business-demo" element={<CorporateDemo />} />
           <Route path="/freemium-demo" element={<FreemiumDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
