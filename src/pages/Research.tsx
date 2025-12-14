@@ -1,7 +1,8 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Card } from "@/components/ui/card";
-import { FileText, Award, BarChart3, BookOpen, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FileText, Award, BarChart3, BookOpen, ExternalLink, Brain, Sparkles, Clock, Github, ExternalLinkIcon } from "lucide-react";
 
 const Research = () => {
   return (
@@ -256,19 +257,80 @@ const Research = () => {
         </div>
       </section>
 
-      {/* Validation Statement */}
+      {/* AI-Powered Features */}
       <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">AI-Powered Technology</h2>
+            <p className="text-lg text-muted-foreground">
+              Cutting-edge AI enhances clinical assessment accuracy
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="p-8 hover:shadow-lg transition-shadow">
+              <div className="flex items-start gap-6">
+                <div className="bg-accent/10 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0">
+                  <Brain className="h-8 w-8 text-accent" />
+                </div>
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold">Sentiment Analysis</h3>
+                  <p className="text-muted-foreground">
+                    Leverages research in natural language processing to accurately detect emotional 
+                    tones and distress signals in text responses, even across different Indian languages 
+                    and dialects.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-8 hover:shadow-lg transition-shadow">
+              <div className="flex items-start gap-6">
+                <div className="bg-success/10 rounded-full w-16 h-16 flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-8 w-8 text-success" />
+                </div>
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold">Early Detection Efficacy</h3>
+                  <p className="text-muted-foreground">
+                    Supported by studies demonstrating that early intervention significantly improves 
+                    mental health outcomes and prevents condition escalation. Our AI detects patterns 
+                    that may indicate emerging concerns.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Validation Statement & Links */}
+      <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <Card className="max-w-4xl mx-auto p-12 text-center bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
             <Award className="h-16 w-16 mx-auto mb-6 text-primary" />
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Clinically Validated Approach
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
               Our assessment methodology combines evidence-based clinical instruments (PHQ-9 and
               GAD-7) with modern AI sentiment analysis to provide reliable, accurate mental health
               risk screening that meets international standards.
             </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button variant="outline" className="rounded-full gap-2" asChild>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                  <Github className="h-4 w-4" />
+                  GitHub Repository
+                </a>
+              </Button>
+              <Button className="rounded-full gap-2" asChild>
+                <a href="/chatbot">
+                  <Sparkles className="h-4 w-4" />
+                  Try Chatbot Demo
+                </a>
+              </Button>
+            </div>
           </Card>
         </div>
       </section>
