@@ -79,17 +79,20 @@ const Chatbot = () => {
   const [showNextSteps, setShowNextSteps] = useState(false);
   const [selectedAction, setSelectedAction] = useState<"expert" | "exercises" | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const allQuestions = [...phq9Questions, ...gad7Questions];
   const totalQuestions = allQuestions.length;
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, showNextSteps, selectedAction]);
+  }, [messages]);
 
   const analyzeResponse = (response: string): number => {
     const lowerResponse = response.toLowerCase();
@@ -251,7 +254,7 @@ const Chatbot = () => {
           {/* Chat Container */}
           <Card className="h-[600px] flex flex-col">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 max-h-full">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
               {messages.map((message, index) => (
                 <div
                   key={index}
