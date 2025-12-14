@@ -72,7 +72,7 @@ const Business = () => {
                 </li>
               </ul>
               <Button asChild variant="outline" size="sm">
-                <Link to="/corporate-demo">View HR Dashboard Demo</Link>
+                <Link to="/B2BDashboardDemo">View HR Dashboard Demo</Link>
               </Button>
             </Card>
 
