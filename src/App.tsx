@@ -12,6 +12,9 @@ import About from "./pages/About";
 import Experts from "./pages/Experts";
 import ExerciseDrill from "./pages/ExerciseDrill";
 import Auth from "./pages/Auth";
+import ApiDemo from "./pages/ApiDemo";
+import CorporateDemo from "./pages/CorporateDemo";
+import FreemiumDemo from "./pages/FreemiumDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
           <Route path="/experts" element={<Experts />} />
           <Route path="/exercise" element={<ExerciseDrill />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/api-demo" element={<ApiDemo />} />
+          <Route path="/corporate-demo" element={<CorporateDemo />} />
+          <Route path="/freemium-demo" element={<FreemiumDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

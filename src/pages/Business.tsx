@@ -53,7 +53,7 @@ const Business = () => {
               <p className="text-muted-foreground mb-4">
                 Partner with hospitals, clinics, and healthcare organizations
               </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-muted-foreground mb-4">
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-1">✓</span>
                   <span>Monthly/annual subscription plans</span>
@@ -71,6 +71,9 @@ const Business = () => {
                   <span>White-label options available</span>
                 </li>
               </ul>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/corporate-demo">View HR Dashboard Demo</Link>
+              </Button>
             </Card>
 
             <Card className="p-8 hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-accent/5 to-background">
@@ -81,7 +84,7 @@ const Business = () => {
               <p className="text-muted-foreground mb-4">
                 Enable healthtech apps and platforms with our assessment engine
               </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-muted-foreground mb-4">
                 <li className="flex items-start gap-2">
                   <span className="text-accent mt-1">✓</span>
                   <span>Pay-per-use API pricing</span>
@@ -99,6 +102,9 @@ const Business = () => {
                   <span>Technical support included</span>
                 </li>
               </ul>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/api-demo">Try API Demo</Link>
+              </Button>
             </Card>
 
             <Card className="p-8 hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-secondary/5 to-background">
@@ -109,7 +115,7 @@ const Business = () => {
               <p className="text-muted-foreground mb-4">
                 Free basic assessments with premium features for advanced users
               </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-muted-foreground mb-4">
                 <li className="flex items-start gap-2">
                   <span className="text-secondary mt-1">✓</span>
                   <span>Basic screening free for everyone</span>
@@ -127,6 +133,9 @@ const Business = () => {
                   <span>Therapist connection service (premium)</span>
                 </li>
               </ul>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/freemium-demo">View Pricing Plans</Link>
+              </Button>
             </Card>
 
             <Card className="p-8 hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-success/5 to-background">
@@ -137,7 +146,7 @@ const Business = () => {
               <p className="text-muted-foreground mb-4">
                 Enterprise solutions for employee mental health programs
               </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-muted-foreground mb-4">
                 <li className="flex items-start gap-2">
                   <span className="text-success mt-1">✓</span>
                   <span>Employee wellness program licensing</span>
@@ -155,6 +164,9 @@ const Business = () => {
                   <span>HR dashboard and insights</span>
                 </li>
               </ul>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/corporate-demo">View Dashboard Demo</Link>
+              </Button>
             </Card>
           </div>
         </div>
