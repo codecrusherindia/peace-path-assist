@@ -249,9 +249,9 @@ const Chatbot = () => {
           </div>
 
           {/* Chat Container */}
-          <Card className="min-h-[600px] flex flex-col">
+          <Card className="h-[600px] flex flex-col">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 max-h-full">
               {messages.map((message, index) => (
                 <div
                   key={index}
