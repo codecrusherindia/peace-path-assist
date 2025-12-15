@@ -160,7 +160,7 @@ const About = () => {
                 <Briefcase className="h-12 w-12 text-primary" />
               </div>
               <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium">
-                Healthcare Track • OSMO Hackathon
+                Healthcare Track • COSMO Hackathon
               </div>
               <h2 className="text-3xl font-bold">Built for Impact</h2>
               <p className="text-lg text-muted-foreground">This project was developed as part of the COSMO hackathon focused on leveraging technology to solve real-world healthcare challenges in India. Our goal is to demonstrate how AI can be used responsibly to increase access to mental health screening while maintaining clinical validity and user privacy.</p>
