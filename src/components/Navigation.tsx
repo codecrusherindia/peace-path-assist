@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Heart } from "lucide-react";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -27,45 +30,46 @@ export const Navigation = () => {
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               activeClassName="text-primary"
             >
-              Home
+              {t("nav.home")}
             </NavLink>
             <NavLink
               to="/chatbot"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               activeClassName="text-primary"
             >
-              Try Chatbot
+              {t("nav.chatbot")}
             </NavLink>
             <NavLink
               to="/features"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               activeClassName="text-primary"
             >
-              Features
+              {t("nav.features")}
             </NavLink>
             <NavLink
               to="/business"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               activeClassName="text-primary"
             >
-              Business
+              {t("nav.business")}
             </NavLink>
             <NavLink
               to="/research"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               activeClassName="text-primary"
             >
-              Research
+              {t("nav.research")}
             </NavLink>
             <NavLink
               to="/about"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               activeClassName="text-primary"
             >
-              About
+              {t("nav.about")}
             </NavLink>
+            <LanguageSelector variant="compact" />
             <Button asChild size="sm" className="rounded-full">
-              <Link to="/chatbot">Start Assessment</Link>
+              <Link to="/chatbot">{t("nav.startAssessment")}</Link>
             </Button>
           </div>
 
@@ -88,7 +92,7 @@ export const Navigation = () => {
               activeClassName="text-primary bg-muted"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Home
+              {t("nav.home")}
             </NavLink>
             <NavLink
               to="/chatbot"
@@ -96,7 +100,7 @@ export const Navigation = () => {
               activeClassName="text-primary bg-muted"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Try Chatbot
+              {t("nav.chatbot")}
             </NavLink>
             <NavLink
               to="/features"
@@ -104,7 +108,7 @@ export const Navigation = () => {
               activeClassName="text-primary bg-muted"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Features
+              {t("nav.features")}
             </NavLink>
             <NavLink
               to="/business"
@@ -112,7 +116,7 @@ export const Navigation = () => {
               activeClassName="text-primary bg-muted"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Business
+              {t("nav.business")}
             </NavLink>
             <NavLink
               to="/research"
@@ -120,7 +124,7 @@ export const Navigation = () => {
               activeClassName="text-primary bg-muted"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Research
+              {t("nav.research")}
             </NavLink>
             <NavLink
               to="/about"
@@ -128,12 +132,13 @@ export const Navigation = () => {
               activeClassName="text-primary bg-muted"
               onClick={() => setMobileMenuOpen(false)}
             >
-              About
+              {t("nav.about")}
             </NavLink>
-            <div className="px-4 pt-2">
+            <div className="px-4 pt-2 space-y-2">
+              <LanguageSelector />
               <Button asChild className="w-full rounded-full">
                 <Link to="/chatbot" onClick={() => setMobileMenuOpen(false)}>
-                  Start Assessment
+                  {t("nav.startAssessment")}
                 </Link>
               </Button>
             </div>

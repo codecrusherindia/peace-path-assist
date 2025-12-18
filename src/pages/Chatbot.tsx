@@ -6,8 +6,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Send, Languages, Download, AlertCircle, CheckCircle2, AlertTriangle, User, Dumbbell, Brain, Heart, Focus, Wind, LogIn } from "lucide-react";
+import { Send, Download, AlertCircle, CheckCircle2, AlertTriangle, User, Dumbbell, Brain, Heart, Focus, Wind, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 type Message = {
   role: "bot" | "user";
@@ -70,14 +72,14 @@ const wellnessExercises = [
 ];
 
 const Chatbot = () => {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "Hi! I'm here to help you understand how you've been feeling. This is a brief mental health check-in using clinically validated PHQ-9 and GAD-7 assessments. Would you like to start?",
+      content: t("chatbot.greeting"),
     },
   ]);
   const [input, setInput] = useState("");
-  const [language, setLanguage] = useState("English");
   const [progress, setProgress] = useState(0);
   const [riskLevel, setRiskLevel] = useState<RiskLevel>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1);
@@ -195,21 +197,21 @@ const Chatbot = () => {
         return (
           <Badge className="bg-success text-success-foreground text-lg px-4 py-2">
             <CheckCircle2 className="mr-2 h-5 w-5" />
-            Low Risk
+            {t("risk.low")}
           </Badge>
         );
       case "moderate":
         return (
           <Badge className="bg-warning text-warning-foreground text-lg px-4 py-2">
             <AlertTriangle className="mr-2 h-5 w-5" />
-            Moderate Risk
+            {t("risk.moderate")}
           </Badge>
         );
       case "high":
         return (
           <Badge className="bg-destructive text-destructive-foreground text-lg px-4 py-2">
             <AlertCircle className="mr-2 h-5 w-5" />
-            High Risk
+            {t("risk.high")}
           </Badge>
         );
       default:
@@ -220,11 +222,11 @@ const Chatbot = () => {
   const getRiskDescription = () => {
     switch (riskLevel) {
       case "low":
-        return "Your responses indicate minimal symptoms. This is a positive sign, but remember that mental health is an ongoing journey.";
+        return t("risk.lowDesc");
       case "moderate":
-        return "Your responses suggest you may be experiencing symptoms consistent with mild to moderate depression or generalized anxiety disorder (GAD). These are common and manageable conditions with the right support and techniques.";
+        return t("risk.moderateDesc");
       case "high":
-        return "Your responses indicate significant distress. You may be experiencing symptoms of major depressive disorder or severe anxiety. We strongly recommend speaking with a mental health professional as soon as possible.";
+        return t("risk.highDesc");
       default:
         return "";
     }
@@ -239,18 +241,15 @@ const Chatbot = () => {
           {/* Header */}
           <div className="mb-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold">Mental Health Assessment</h1>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Languages className="h-4 w-4" />
-                {language}
-              </Button>
+              <h1 className="text-3xl font-bold">{t("chatbot.title")}</h1>
+              <LanguageSelector variant="compact" />
             </div>
             <Progress value={progress} className="h-2" />
             <p className="text-sm text-muted-foreground">
-              Progress: {Math.round(progress)}% Complete
+              {t("chatbot.progress")}: {Math.round(progress)}% {t("chatbot.complete")}
               {currentQuestionIndex >= 0 && currentQuestionIndex < totalQuestions && (
                 <span className="ml-2">
-                  (Question {currentQuestionIndex + 1} of {totalQuestions})
+                  ({t("chatbot.question")} {currentQuestionIndex + 1} {t("chatbot.of")} {totalQuestions})
                 </span>
               )}
             </p>
@@ -281,7 +280,7 @@ const Chatbot = () => {
               {riskLevel && showNextSteps && !selectedAction && (
                 <Card className="p-6 space-y-6 bg-gradient-to-br from-muted/50 to-background">
                   <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold">Assessment Complete</h2>
+                    <h2 className="text-2xl font-bold">{t("chatbot.assessmentComplete")}</h2>
                     <div className="flex justify-center">{getRiskBadge()}</div>
                     <p className="text-muted-foreground max-w-lg mx-auto">
                       {getRiskDescription()}
@@ -290,7 +289,7 @@ const Chatbot = () => {
 
                   {/* Next Steps Options */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-center">What would you like to do next?</h3>
+                    <h3 className="text-lg font-semibold text-center">{t("chatbot.nextSteps")}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       {/* Connect with Expert */}
                       <Card 
@@ -301,11 +300,11 @@ const Chatbot = () => {
                           <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center">
                             <User className="h-8 w-8 text-primary" />
                           </div>
-                          <h4 className="font-semibold">Connect with a Medical Expert</h4>
+                          <h4 className="font-semibold">{t("chatbot.connectExpert")}</h4>
                           <p className="text-sm text-muted-foreground">
-                            Speak with a licensed mental health professional for personalized guidance and support
+                            {t("chatbot.connectExpertDesc")}
                           </p>
-                          <Badge variant="secondary" className="mt-2">Recommended</Badge>
+                          <Badge variant="secondary" className="mt-2">{t("common.recommended")}</Badge>
                         </div>
                       </Card>
 
@@ -319,11 +318,11 @@ const Chatbot = () => {
                             <div className="bg-accent/10 rounded-full w-16 h-16 flex items-center justify-center">
                               <Dumbbell className="h-8 w-8 text-accent" />
                             </div>
-                            <h4 className="font-semibold">Try Wellness Exercises</h4>
+                            <h4 className="font-semibold">{t("chatbot.wellnessExercises")}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Simple attention-building and relaxation techniques to improve your mental wellbeing
+                              {t("chatbot.wellnessExercisesDesc")}
                             </p>
-                            <Badge variant="outline" className="mt-2">Self-Help</Badge>
+                            <Badge variant="outline" className="mt-2">{t("common.selfHelp")}</Badge>
                           </div>
                         </Card>
                       )}
@@ -332,7 +331,7 @@ const Chatbot = () => {
                     <div className="flex justify-center pt-4">
                       <Button variant="outline" className="rounded-full gap-2">
                         <Download className="h-4 w-4" />
-                        Download Report (PDF)
+                        {t("chatbot.downloadReport")}
                       </Button>
                     </div>
                   </div>
@@ -346,43 +345,43 @@ const Chatbot = () => {
                     <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto">
                       <User className="h-10 w-10 text-primary" />
                     </div>
-                    <h2 className="text-2xl font-bold">Connect with a Mental Health Expert</h2>
+                    <h2 className="text-2xl font-bold">{t("chatbot.connectExpert")}</h2>
                     <p className="text-muted-foreground max-w-lg mx-auto">
-                      Choose the type of professional you'd like to connect with. Click to view available experts.
+                      {t("chatbot.connectExpertDesc")}
                     </p>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-4">
                     <Link to="/experts?type=psychiatrist">
                       <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
-                        <h4 className="font-semibold mb-2">Psychiatrist</h4>
-                        <p className="text-sm text-muted-foreground mb-3">Medical doctor specializing in mental health</p>
-                        <Badge className="bg-primary/10 text-primary">View Doctors →</Badge>
+                        <h4 className="font-semibold mb-2">{t("expert.psychiatrist")}</h4>
+                        <p className="text-sm text-muted-foreground mb-3">{t("expert.psychiatristDesc")}</p>
+                        <Badge className="bg-primary/10 text-primary">{t("expert.viewDoctors")}</Badge>
                       </Card>
                     </Link>
                     <Link to="/experts?type=psychologist">
                       <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
-                        <h4 className="font-semibold mb-2">Psychologist</h4>
-                        <p className="text-sm text-muted-foreground mb-3">Therapy and counseling specialist</p>
-                        <Badge className="bg-accent/10 text-accent">View Experts →</Badge>
+                        <h4 className="font-semibold mb-2">{t("expert.psychologist")}</h4>
+                        <p className="text-sm text-muted-foreground mb-3">{t("expert.psychologistDesc")}</p>
+                        <Badge className="bg-accent/10 text-accent">{t("expert.viewExperts")}</Badge>
                       </Card>
                     </Link>
                     <Link to="/experts?type=counselor">
                       <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
-                        <h4 className="font-semibold mb-2">Counselor</h4>
-                        <p className="text-sm text-muted-foreground mb-3">Supportive guidance and coping strategies</p>
-                        <Badge className="bg-secondary/10 text-secondary">View Counselors →</Badge>
+                        <h4 className="font-semibold mb-2">{t("expert.counselor")}</h4>
+                        <p className="text-sm text-muted-foreground mb-3">{t("expert.counselorDesc")}</p>
+                        <Badge className="bg-secondary/10 text-secondary">{t("expert.viewCounselors")}</Badge>
                       </Card>
                     </Link>
                   </div>
 
                   <div className="flex flex-col items-center gap-4">
                     <Button variant="outline" onClick={() => setSelectedAction(null)}>
-                      ← Back to Options
+                      {t("common.backToOptions")}
                     </Button>
                     <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
                       <LogIn className="h-4 w-4" />
-                      Sign in to save your results
+                      {t("common.signIn")}
                     </Link>
                   </div>
                 </Card>
