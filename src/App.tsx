@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LanguageProvider } from "@/context/LanguageContext"; // <--- Import this
+import { LanguageProvider } from "@/context/LanguageContext"; // <--- Import the Language Provider
 
 import Index from "./pages/Index";
 import Chatbot from "./pages/Chatbot";
@@ -26,7 +26,10 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <LanguageProvider> {/* <--- Wrap your app here */}
+      {/* Wrap the app with LanguageProvider so the language state 
+        is shared between the Navigation bar and the Chatbot 
+      */}
+      <LanguageProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -49,7 +52,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </LanguageProvider> {/* <--- Close the wrapper here */}
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
