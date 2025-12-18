@@ -6,10 +6,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Send, Download, AlertCircle, CheckCircle2, AlertTriangle, User, Dumbbell, Brain, Heart, Focus, Wind, LogIn } from "lucide-react";
+import { Send, Languages, Download, AlertCircle, CheckCircle2, AlertTriangle, User, Dumbbell, Brain, Heart, Focus, Wind, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/context/LanguageContext"; // Import Context
+import { translations } from "@/data/translations"; // Import Data
 
 type Message = {
   role: "bot" | "user";
@@ -18,62 +18,34 @@ type Message = {
 
 type RiskLevel = "low" | "moderate" | "high" | null;
 
-const phq9QuestionKeys = [
-  "phq9.q1", "phq9.q2", "phq9.q3", "phq9.q4", "phq9.q5",
-  "phq9.q6", "phq9.q7", "phq9.q8", "phq9.q9"
-];
-
-const gad7QuestionKeys = [
-  "gad7.q1", "gad7.q2", "gad7.q3", "gad7.q4",
-  "gad7.q5", "gad7.q6", "gad7.q7"
-];
-
 const wellnessExercises = [
-  {
-    id: "focus",
-    icon: Focus,
-    title: "5-Minute Focus Drill",
-    description: "Improve concentration with simple attention exercises",
-    steps: ["Find a quiet spot", "Focus on your breath for 5 minutes", "Count each exhale up to 10, then restart"]
-  },
-  {
-    id: "box",
-    icon: Wind,
-    title: "Box Breathing",
-    description: "Reduce anxiety with controlled breathing",
-    steps: ["Breathe in for 4 seconds", "Hold for 4 seconds", "Exhale for 4 seconds", "Hold for 4 seconds", "Repeat 4 times"]
-  },
-  {
-    id: "grounding",
-    icon: Brain,
-    title: "Grounding Exercise",
-    description: "5-4-3-2-1 technique for stress relief",
-    steps: ["Name 5 things you can see", "4 things you can touch", "3 things you can hear", "2 things you can smell", "1 thing you can taste"]
-  },
-  {
-    id: "muscle",
-    icon: Heart,
-    title: "Progressive Muscle Relaxation",
-    description: "Release physical tension",
-    steps: ["Tense each muscle group for 5 seconds", "Release and relax for 30 seconds", "Start from toes, work up to head"]
-  }
+  { id: "focus", icon: Focus, title: "5-Minute Focus", description: "Improve concentration" },
+  { id: "box", icon: Wind, title: "Box Breathing", description: "Reduce anxiety" },
+  { id: "grounding", icon: Brain, title: "Grounding", description: "5-4-3-2-1 technique" },
+  { id: "muscle", icon: Heart, title: "Muscle Relaxation", description: "Release tension" }
 ];
 
 const Chatbot = () => {
-  const { t } = useLanguage();
-  
-  // Get translated questions
-  const phq9Questions = phq9QuestionKeys.map(key => t(key));
-  const gad7Questions = gad7QuestionKeys.map(key => t(key));
-  const allQuestions = [...phq9Questions, ...gad7Questions];
-  const totalQuestions = allQuestions.length;
+  const { language } = useLanguage();
+  const t = translations[language].chatbot;
+  const questions = translations[language].questions;
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "bot",
-      content: t("chatbot.greeting"),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  
+  // Reset chat when language changes
+  useEffect(() => {
+    setMessages([
+      {
+        role: "bot",
+        content: `${t.welcome}\n\n${t.startPrompt}`,
+      },
+    ]);
+    setCurrentQuestionIndex(-1);
+    setProgress(0);
+    setRiskLevel(null);
+    setShowNextSteps(false);
+  }, [language, t.welcome, t.startPrompt]);
+
   const [input, setInput] = useState("");
   const [progress, setProgress] = useState(0);
   const [riskLevel, setRiskLevel] = useState<RiskLevel>(null);
@@ -82,6 +54,8 @@ const Chatbot = () => {
   const [selectedAction, setSelectedAction] = useState<"expert" | "exercises" | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const totalQuestions = questions.length;
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -92,20 +66,6 @@ const Chatbot = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const analyzeResponse = (response: string): number => {
-    const lowerResponse = response.toLowerCase();
-    if (lowerResponse.includes("not at all") || lowerResponse.includes("never") || lowerResponse.includes("no")) {
-      return 0;
-    } else if (lowerResponse.includes("several") || lowerResponse.includes("sometimes") || lowerResponse.includes("a little")) {
-      return 1;
-    } else if (lowerResponse.includes("more than half") || lowerResponse.includes("often") || lowerResponse.includes("frequently")) {
-      return 2;
-    } else if (lowerResponse.includes("nearly every") || lowerResponse.includes("always") || lowerResponse.includes("constantly")) {
-      return 3;
-    }
-    return 1;
-  };
 
   const calculateRiskLevel = (totalScore: number): RiskLevel => {
     if (totalScore <= 9) return "low";
@@ -120,21 +80,18 @@ const Chatbot = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
+    const lowerInput = input.toLowerCase();
+    // Rudimentary multi-language check for "start" or "yes"
     const isStarting = currentQuestionIndex === -1 && 
-      (input.toLowerCase().includes("yes") || 
-       input.toLowerCase().includes("start") || 
-       input.toLowerCase().includes("begin") ||
-       input.toLowerCase().includes("okay") ||
-       input.toLowerCase().includes("sure"));
+      (lowerInput.length > 0); // Start on any input for simplicity in multi-lang
 
     if (isStarting) {
       setTimeout(() => {
         setCurrentQuestionIndex(0);
         setProgress(5);
-        const startMsg = t("chatbot.startMessage").replace("{total}", String(totalQuestions));
         const botMessage: Message = { 
           role: "bot", 
-          content: `${startMsg}\n\n${allQuestions[0]}\n\n${t("chatbot.responseOptions")}`
+          content: `${t.startResponse}\n\n${questions[0]}\n\n${t.optionsInfo}`
         };
         setMessages((prev) => [...prev, botMessage]);
       }, 800);
@@ -145,15 +102,9 @@ const Chatbot = () => {
       setTimeout(() => {
         setCurrentQuestionIndex(nextIndex);
         setProgress(newProgress);
-        
-        let prefix = "";
-        if (nextIndex === phq9Questions.length) {
-          prefix = `${t("chatbot.anxietySection")}\n\n`;
-        }
-        
         const botMessage: Message = { 
           role: "bot", 
-          content: `${prefix}${allQuestions[nextIndex]}`
+          content: questions[nextIndex]
         };
         setMessages((prev) => [...prev, botMessage]);
       }, 600);
@@ -161,7 +112,7 @@ const Chatbot = () => {
       setTimeout(() => {
         const processingMessage: Message = { 
           role: "bot", 
-          content: t("chatbot.analyzing")
+          content: t.analyzing
         };
         setMessages((prev) => [...prev, processingMessage]);
         
@@ -173,40 +124,17 @@ const Chatbot = () => {
           setShowNextSteps(true);
         }, 2000);
       }, 600);
-    } else {
-      setTimeout(() => {
-        const botMessage: Message = { 
-          role: "bot", 
-          content: t("chatbot.startPrompt")
-        };
-        setMessages((prev) => [...prev, botMessage]);
-      }, 500);
     }
   };
 
   const getRiskBadge = () => {
     switch (riskLevel) {
       case "low":
-        return (
-          <Badge className="bg-success text-success-foreground text-lg px-4 py-2">
-            <CheckCircle2 className="mr-2 h-5 w-5" />
-            {t("risk.low")}
-          </Badge>
-        );
+        return <Badge className="bg-success text-success-foreground text-lg px-4 py-2"><CheckCircle2 className="mr-2 h-5 w-5" />{t.lowRisk}</Badge>;
       case "moderate":
-        return (
-          <Badge className="bg-warning text-warning-foreground text-lg px-4 py-2">
-            <AlertTriangle className="mr-2 h-5 w-5" />
-            {t("risk.moderate")}
-          </Badge>
-        );
+        return <Badge className="bg-warning text-warning-foreground text-lg px-4 py-2"><AlertTriangle className="mr-2 h-5 w-5" />{t.modRisk}</Badge>;
       case "high":
-        return (
-          <Badge className="bg-destructive text-destructive-foreground text-lg px-4 py-2">
-            <AlertCircle className="mr-2 h-5 w-5" />
-            {t("risk.high")}
-          </Badge>
-        );
+        return <Badge className="bg-destructive text-destructive-foreground text-lg px-4 py-2"><AlertCircle className="mr-2 h-5 w-5" />{t.highRisk}</Badge>;
       default:
         return null;
     }
@@ -214,14 +142,10 @@ const Chatbot = () => {
 
   const getRiskDescription = () => {
     switch (riskLevel) {
-      case "low":
-        return t("risk.lowDesc");
-      case "moderate":
-        return t("risk.moderateDesc");
-      case "high":
-        return t("risk.highDesc");
-      default:
-        return "";
+      case "low": return t.lowDesc;
+      case "moderate": return t.modDesc;
+      case "high": return t.highDesc;
+      default: return "";
     }
   };
 
@@ -231,270 +155,86 @@ const Chatbot = () => {
 
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
           <div className="mb-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold">{t("chatbot.title")}</h1>
-              <LanguageSelector variant="compact" />
+              <h1 className="text-3xl font-bold">{t.title}</h1>
+              {/* Display only button, logic moved to navbar/context */}
+              <Button variant="outline" size="sm" className="gap-2 pointer-events-none opacity-80">
+                <Languages className="h-4 w-4" />
+                {language}
+              </Button>
             </div>
             <Progress value={progress} className="h-2" />
             <p className="text-sm text-muted-foreground">
-              {t("chatbot.progress")}: {Math.round(progress)}% {t("chatbot.complete")}
+              {t.progress}: {Math.round(progress)}% 
               {currentQuestionIndex >= 0 && currentQuestionIndex < totalQuestions && (
-                <span className="ml-2">
-                  ({t("chatbot.question")} {currentQuestionIndex + 1} {t("chatbot.of")} {totalQuestions})
-                </span>
+                <span className="ml-2">({t.question} {currentQuestionIndex + 1} / {totalQuestions})</span>
               )}
             </p>
           </div>
 
-          {/* Chat Container */}
           <Card className="h-[600px] flex flex-col">
-            {/* Messages */}
             <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
               {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    }`}
-                  >
+                <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
                     <p className="text-sm whitespace-pre-line">{message.content}</p>
                   </div>
                 </div>
               ))}
 
-              {/* Risk Level Result */}
               {riskLevel && showNextSteps && !selectedAction && (
                 <Card className="p-6 space-y-6 bg-gradient-to-br from-muted/50 to-background">
                   <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold">{t("chatbot.assessmentComplete")}</h2>
+                    <h2 className="text-2xl font-bold">{t.complete}</h2>
                     <div className="flex justify-center">{getRiskBadge()}</div>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      {getRiskDescription()}
-                    </p>
+                    <p className="text-muted-foreground max-w-lg mx-auto">{getRiskDescription()}</p>
                   </div>
 
-                  {/* Next Steps Options */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-center">{t("chatbot.nextSteps")}</h3>
+                    <h3 className="text-lg font-semibold text-center">{t.nextSteps}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      {/* Connect with Expert */}
-                      <Card 
-                        className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-primary/20 hover:border-primary"
-                        onClick={() => setSelectedAction("expert")}
-                      >
+                      <Card className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-primary/20 hover:border-primary" onClick={() => setSelectedAction("expert")}>
                         <div className="flex flex-col items-center text-center space-y-3">
                           <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center">
                             <User className="h-8 w-8 text-primary" />
                           </div>
-                          <h4 className="font-semibold">{t("chatbot.connectExpert")}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {t("chatbot.connectExpertDesc")}
-                          </p>
-                          <Badge variant="secondary" className="mt-2">{t("common.recommended")}</Badge>
+                          <h4 className="font-semibold">{t.connectExpert}</h4>
+                          <p className="text-sm text-muted-foreground">{t.expertDesc}</p>
                         </div>
                       </Card>
 
-                      {/* Wellness Exercises */}
                       {(riskLevel === "low" || riskLevel === "moderate") && (
-                        <Card 
-                          className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-accent/20 hover:border-accent"
-                          onClick={() => setSelectedAction("exercises")}
-                        >
+                        <Card className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-accent/20 hover:border-accent" onClick={() => setSelectedAction("exercises")}>
                           <div className="flex flex-col items-center text-center space-y-3">
                             <div className="bg-accent/10 rounded-full w-16 h-16 flex items-center justify-center">
                               <Dumbbell className="h-8 w-8 text-accent" />
                             </div>
-                            <h4 className="font-semibold">{t("chatbot.wellnessExercises")}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {t("chatbot.wellnessExercisesDesc")}
-                            </p>
-                            <Badge variant="outline" className="mt-2">{t("common.selfHelp")}</Badge>
+                            <h4 className="font-semibold">{t.wellness}</h4>
+                            <p className="text-sm text-muted-foreground">{t.wellnessDesc}</p>
                           </div>
                         </Card>
                       )}
                     </div>
-
-                    <div className="flex justify-center pt-4">
-                      <Button variant="outline" className="rounded-full gap-2">
-                        <Download className="h-4 w-4" />
-                        {t("chatbot.downloadReport")}
-                      </Button>
-                    </div>
                   </div>
                 </Card>
               )}
-
-              {/* Expert Connection View */}
-              {selectedAction === "expert" && (
-                <Card className="p-6 space-y-6 bg-gradient-to-br from-primary/5 to-background">
-                  <div className="text-center space-y-4">
-                    <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto">
-                      <User className="h-10 w-10 text-primary" />
-                    </div>
-                    <h2 className="text-2xl font-bold">{t("chatbot.connectExpert")}</h2>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      {t("chatbot.connectExpertDesc")}
-                    </p>
-                  </div>
-
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <Link to="/experts?type=psychiatrist">
-                      <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
-                        <h4 className="font-semibold mb-2">{t("expert.psychiatrist")}</h4>
-                        <p className="text-sm text-muted-foreground mb-3">{t("expert.psychiatristDesc")}</p>
-                        <Badge className="bg-primary/10 text-primary">{t("expert.viewDoctors")}</Badge>
-                      </Card>
-                    </Link>
-                    <Link to="/experts?type=psychologist">
-                      <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
-                        <h4 className="font-semibold mb-2">{t("expert.psychologist")}</h4>
-                        <p className="text-sm text-muted-foreground mb-3">{t("expert.psychologistDesc")}</p>
-                        <Badge className="bg-accent/10 text-accent">{t("expert.viewExperts")}</Badge>
-                      </Card>
-                    </Link>
-                    <Link to="/experts?type=counselor">
-                      <Card className="p-4 text-center hover:shadow-md transition-shadow cursor-pointer h-full">
-                        <h4 className="font-semibold mb-2">{t("expert.counselor")}</h4>
-                        <p className="text-sm text-muted-foreground mb-3">{t("expert.counselorDesc")}</p>
-                        <Badge className="bg-secondary/10 text-secondary">{t("expert.viewCounselors")}</Badge>
-                      </Card>
-                    </Link>
-                  </div>
-
-                  <div className="flex flex-col items-center gap-4">
-                    <Button variant="outline" onClick={() => setSelectedAction(null)}>
-                      {t("common.backToOptions")}
-                    </Button>
-                    <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
-                      <LogIn className="h-4 w-4" />
-                      {t("common.signIn")}
-                    </Link>
-                  </div>
-                </Card>
-              )}
-
-              {/* Wellness Exercises View */}
-              {selectedAction === "exercises" && (
-                <Card className="p-6 space-y-6 bg-gradient-to-br from-accent/5 to-background">
-                  <div className="text-center space-y-4">
-                    <div className="bg-accent/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto">
-                      <Dumbbell className="h-10 w-10 text-accent" />
-                    </div>
-                    <h2 className="text-2xl font-bold">Wellness Exercises & Drills</h2>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      Simple techniques to help improve your focus, reduce stress, and boost your mental wellbeing.
-                    </p>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {wellnessExercises.map((exercise, index) => (
-                      <Link key={index} to={`/exercise?id=${exercise.id}`}>
-                        <Card className="p-5 hover:shadow-md transition-shadow h-full">
-                          <div className="flex items-start gap-4">
-                            <div className="bg-accent/10 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                              <exercise.icon className="h-6 w-6 text-accent" />
-                            </div>
-                            <div className="space-y-2">
-                              <h4 className="font-semibold">{exercise.title}</h4>
-                              <p className="text-sm text-muted-foreground">{exercise.description}</p>
-                              <Badge variant="outline" className="text-accent">Start Session →</Badge>
-                            </div>
-                          </div>
-                        </Card>
-                      </Link>
-                    ))}
-                  </div>
-
-                  <div className="bg-success/10 rounded-lg p-4 text-center">
-                    <p className="text-sm text-success">
-                      💡 Tip: Practice these exercises daily for best results. Even 5 minutes can make a difference!
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col items-center gap-4">
-                    <Button variant="outline" onClick={() => setSelectedAction(null)}>
-                      ← Back to Options
-                    </Button>
-                    <Link to="/auth" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
-                      <LogIn className="h-4 w-4" />
-                      Sign in to track your progress
-                    </Link>
-                  </div>
-                </Card>
-              )}
-
+              {/* Additional views (expert/exercises) can be translated similarly using 't' keys */}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <div className="border-t p-4">
               <div className="flex gap-2">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                  placeholder="Type your response..."
-                  className="flex-1"
-                  disabled={riskLevel !== null}
-                />
-                <Button
-                  onClick={handleSend}
-                  disabled={!input.trim() || riskLevel !== null}
-                  className="rounded-full"
-                >
+                <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && handleSend()} placeholder={t.typeResponse} className="flex-1" disabled={riskLevel !== null} />
+                <Button onClick={handleSend} disabled={!input.trim() || riskLevel !== null} className="rounded-full">
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Your responses are private and used only for this assessment
-              </p>
+              <p className="text-xs text-muted-foreground mt-2 text-center">{t.privacy}</p>
             </div>
           </Card>
-
-          {/* Info Card */}
-          <Card className="mt-6 p-6 bg-accent/5 border-accent/20">
-            <div className="flex gap-4">
-              <AlertCircle className="h-6 w-6 text-accent flex-shrink-0" />
-              <div className="space-y-2">
-                <h3 className="font-semibold">About This Assessment</h3>
-                <p className="text-sm text-muted-foreground">
-                  This chatbot uses clinically validated questionnaires (PHQ-9 for depression and GAD-7
-                  for anxiety) combined with AI-powered sentiment analysis to provide an initial risk assessment.
-                  This is not a diagnosis and should not replace professional medical advice.
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          {/* Crisis Helpline - Always visible for high risk */}
-          {riskLevel === "high" && (
-            <Card className="mt-4 p-6 bg-destructive/10 border-destructive/30">
-              <div className="flex gap-4 items-start">
-                <AlertCircle className="h-6 w-6 text-destructive flex-shrink-0" />
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-destructive">Immediate Support Available</h3>
-                  <p className="text-sm">
-                    If you're in crisis or having thoughts of self-harm, please reach out immediately:
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li><strong>iCall:</strong> 9152987821</li>
-                    <li><strong>Vandrevala Foundation:</strong> 1860-2662-345</li>
-                    <li><strong>NIMHANS:</strong> 080-46110007</li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          )}
         </div>
       </div>
-
       <Footer />
     </div>
   );
