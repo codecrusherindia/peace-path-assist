@@ -130,7 +130,7 @@ const Chatbot = () => {
     recognition.onresult = (event: any) => {
       // 3. Capture the transcript safely
       const transcript = event.results[0][0].transcript;
-      console.log("Heard:", transcript); // Check your console to see if this prints!
+      console.log("Heard:", transcript); 
       
       if (transcript) {
         setInput(transcript);
@@ -138,15 +138,21 @@ const Chatbot = () => {
       setIsListening(false);
     };
 
+    // --- UPDATED ERROR HANDLER ---
     recognition.onerror = (event: any) => {
+      // Handle "no-speech" gracefully (ignore console error)
+      if (event.error === 'no-speech') {
+        console.warn("Microphone timed out (no speech detected).");
+        setIsListening(false);
+        return; 
+      }
+
+      // Handle actual errors
       console.error("Speech Error:", event.error);
       setIsListening(false);
       
       if (event.error === 'not-allowed') {
         alert("Microphone access denied. Please click the lock icon in your URL bar to allow microphone access.");
-      } else if (event.error === 'no-speech') {
-        // This happens if you click the button but don't say anything
-        console.log("No speech detected.");
       }
     };
 
@@ -330,7 +336,7 @@ const Chatbot = () => {
                   </div>
                 </Card>
               )}
-              {/* Expert & Exercise Views Omitted for brevity (same as previous) */}
+              {/* Expert & Exercise Views Omitted for brevity */}
               <div ref={messagesEndRef} />
             </div>
 
