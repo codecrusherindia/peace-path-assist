@@ -2,15 +2,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Heart, Globe } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
-import { Language, translations } from "@/data/translations";
+import { Menu, X, Heart, Globe } from "lucide-react"; // Added Globe icon
+import { useLanguage } from "@/context/LanguageContext"; // Import Context
+import { translations, Language } from "@/data/translations"; // Import Data
 
 export const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // 1. Get global language state
   const { language, setLanguage } = useLanguage();
-  const t = translations[language].nav; // Get translated nav items
+  
+  // 2. Get translated text for the navigation
+  const t = translations[language].nav;
 
+  // List of available languages
   const languages: Language[] = ["English", "Hindi", "Marathi", "Bengali", "Telugu", "Tamil"];
 
   return (
@@ -27,26 +32,52 @@ export const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <NavLink to="/" end className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-primary">
+            {/* NavLinks using translated text (t.home, t.features, etc.) */}
+            <NavLink
+              to="/"
+              end
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-primary"
+            >
               {t.home}
             </NavLink>
-            <NavLink to="/chatbot" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-primary">
+            <NavLink
+              to="/chatbot"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-primary"
+            >
               {t.chatbot}
             </NavLink>
-            <NavLink to="/features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-primary">
+            <NavLink
+              to="/features"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-primary"
+            >
               {t.features}
             </NavLink>
-            <NavLink to="/business" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-primary">
+            <NavLink
+              to="/business"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-primary"
+            >
               {t.business}
             </NavLink>
-            <NavLink to="/research" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-primary">
+            <NavLink
+              to="/research"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-primary"
+            >
               {t.research}
             </NavLink>
-            <NavLink to="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-primary">
+            <NavLink
+              to="/about"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-primary"
+            >
               {t.about}
             </NavLink>
 
-            {/* Language Dropdown */}
+            {/* Language Selector (Desktop) */}
             <div className="relative flex items-center">
               <Globe className="absolute left-2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <select
@@ -67,8 +98,9 @@ export const Navigation = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button & Mobile Language Selector */}
+          {/* Mobile Header Controls */}
           <div className="flex items-center gap-2 md:hidden">
+            {/* Mobile Language Selector (Compact) */}
             <div className="relative flex items-center">
                <Globe className="absolute left-2 h-4 w-4 text-muted-foreground pointer-events-none" />
                <select
@@ -77,11 +109,12 @@ export const Navigation = () => {
                  className="h-9 w-[50px] pl-7 pr-0 rounded-md border border-input bg-transparent text-sm font-medium shadow-sm cursor-pointer appearance-none overflow-hidden"
                >
                  {languages.map((lang) => (
-                    <option key={lang} value={lang}>{lang.slice(0,2)}</option>
+                    <option key={lang} value={lang}>{lang.slice(0, 2)}</option>
                  ))}
                </select>
             </div>
-            
+
+            {/* Mobile Menu Button */}
             <button
               className="p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -91,28 +124,58 @@ export const Navigation = () => {
           </div>
         </div>
 
-        {/* Mobile Menu Content */}
+        {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2">
-            {[
-              { to: "/", label: t.home },
-              { to: "/chatbot", label: t.chatbot },
-              { to: "/features", label: t.features },
-              { to: "/business", label: t.business },
-              { to: "/research", label: t.research },
-              { to: "/about", label: t.about }
-            ].map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                activeClassName="text-primary bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-            
+            <NavLink
+              to="/"
+              end
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              activeClassName="text-primary bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.home}
+            </NavLink>
+            <NavLink
+              to="/chatbot"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              activeClassName="text-primary bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.chatbot}
+            </NavLink>
+            <NavLink
+              to="/features"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              activeClassName="text-primary bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.features}
+            </NavLink>
+            <NavLink
+              to="/business"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              activeClassName="text-primary bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.business}
+            </NavLink>
+            <NavLink
+              to="/research"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              activeClassName="text-primary bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.research}
+            </NavLink>
+            <NavLink
+              to="/about"
+              className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              activeClassName="text-primary bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {t.about}
+            </NavLink>
             <div className="px-4 pt-2">
               <Button asChild className="w-full rounded-full">
                 <Link to="/chatbot" onClick={() => setMobileMenuOpen(false)}>
