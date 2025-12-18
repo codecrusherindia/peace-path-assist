@@ -102,44 +102,61 @@ const Chatbot = () => {
 
   // 2. Speech-to-Text (User Speaks)
   const startListening = () => {
-    // Check browser support
+    // 1. Check browser support
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     
     if (!SpeechRecognition) {
-      alert("Your browser does not support voice input. Please use Chrome or Edge.");
+      alert("Your browser does not support voice input. Please use Google Chrome.");
       return;
     }
 
     const recognition = new SpeechRecognition();
     recognition.lang = getVoiceLangCode(language);
-    recognition.interimResults = false;
+    recognition.interimResults = false; // We only want the final text
     recognition.maxAlternatives = 1;
 
     setIsListening(true);
 
+    // 2. Debugging Logs
     recognition.onstart = () => {
-      console.log("Listening...");
+      console.log("Mic started. Speak now...");
+    };
+
+    recognition.onspeechend = () => {
+      console.log("Speech stopped. Processing...");
+      recognition.stop();
     };
 
     recognition.onresult = (event: any) => {
+      // 3. Capture the transcript safely
       const transcript = event.results[0][0].transcript;
-      setInput(transcript); // Fill input with spoken text
-      setIsListening(false);
+      console.log("Heard:", transcript); // Check your console to see if this prints!
       
-      // Optional: Auto-send if confidence is high? 
-      // For now, we let user review and click send.
+      if (transcript) {
+        setInput(transcript);
+      }
+      setIsListening(false);
     };
 
     recognition.onerror = (event: any) => {
-      console.error("Speech recognition error", event.error);
+      console.error("Speech Error:", event.error);
       setIsListening(false);
+      
+      if (event.error === 'not-allowed') {
+        alert("Microphone access denied. Please click the lock icon in your URL bar to allow microphone access.");
+      } else if (event.error === 'no-speech') {
+        // This happens if you click the button but don't say anything
+        console.log("No speech detected.");
+      }
     };
 
-    recognition.onend = () => {
+    // 4. Start the engine
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error("Recognition start error:", err);
       setIsListening(false);
-    };
-
-    recognition.start();
+    }
   };
 
   // --- EFFECTS ---
