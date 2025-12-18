@@ -112,42 +112,48 @@ const Chatbot = () => {
 
     const recognition = new SpeechRecognition();
     recognition.lang = getVoiceLangCode(language);
-    recognition.interimResults = false; // We only want the final text
+    
+    // --- CRITICAL FIX: Enable interim results ---
+    recognition.interimResults = true; 
     recognition.maxAlternatives = 1;
 
     setIsListening(true);
 
-    // 2. Debugging Logs
     recognition.onstart = () => {
       console.log("Mic started. Speak now...");
     };
 
+    // We don't stop immediately on 'speechend' anymore to allow processing to finish
     recognition.onspeechend = () => {
       console.log("Speech stopped. Processing...");
-      recognition.stop();
     };
 
     recognition.onresult = (event: any) => {
-      // 3. Capture the transcript safely
-      const transcript = event.results[0][0].transcript;
-      console.log("Heard:", transcript); 
+      // Loop through results to find the "final" transcript
+      let finalTranscript = "";
       
-      if (transcript) {
-        setInput(transcript);
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
       }
-      setIsListening(false);
+
+      // Only update input if we have a final sentence
+      if (finalTranscript) {
+        console.log("Heard Final:", finalTranscript);
+        setInput(finalTranscript);
+        recognition.stop(); 
+        setIsListening(false);
+      }
     };
 
-    // --- UPDATED ERROR HANDLER ---
     recognition.onerror = (event: any) => {
-      // Handle "no-speech" gracefully (ignore console error)
       if (event.error === 'no-speech') {
         console.warn("Microphone timed out (no speech detected).");
         setIsListening(false);
         return; 
       }
 
-      // Handle actual errors
       console.error("Speech Error:", event.error);
       setIsListening(false);
       
