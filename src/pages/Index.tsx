@@ -13,12 +13,19 @@ import {
   MapPin,
   Shield,
   DollarSign,
-  Clock,
-  TrendingUp,
 } from "lucide-react";
 import heroImage from "@/assets/hero-chatbot.png";
+import { useLanguage } from "@/context/LanguageContext"; // Import hook
+import { translations } from "@/data/translations"; // Import data
 
 const Index = () => {
+  // 1. Get the current language
+  const { language } = useLanguage();
+  
+  // 2. Get the specific translations for the index page
+  // Note: Ensure you added 'index' key to translations.ts as per the step above
+  const t = translations[language].index; 
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -30,25 +37,25 @@ const Index = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-                Solving India's Mental Health Screening Shortage
+                {t.badge}
               </div>
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                Instant Mental Health{" "}
+                {t.title}{" "}
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Check-In
+                  {t.titleHighlight}
                 </span>
               </h1>
               <p className="text-xl text-muted-foreground">
-                A simple, private, low-cost chatbot that helps you understand your emotional risk level.
+                {t.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg" className="rounded-full text-lg">
                   <Link to="/chatbot">
-                    Start Assessment <ArrowRight className="ml-2 h-5 w-5" />
+                    {t.startAssessment} <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 <Button asChild variant="outline" size="lg" className="rounded-full text-lg">
-                  <Link to="/features">Learn More</Link>
+                  <Link to="/features">{t.learnMore}</Link>
                 </Button>
               </div>
             </div>
@@ -69,22 +76,22 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Mental Health Access Crisis in India
+              {t.crisisTitle}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Understanding the gap between need and availability
+              {t.crisisSubtitle}
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <Card className="p-8 text-center hover:shadow-lg transition-shadow bg-gradient-to-br from-destructive/5 to-warning/5 border-destructive/20">
               <Users className="h-12 w-12 mx-auto mb-4 text-destructive" />
               <div className="text-4xl font-bold mb-2 text-destructive">1:100,000</div>
-              <p className="text-muted-foreground">Psychiatrist to population ratio in India</p>
+              <p className="text-muted-foreground">{t.stat1Label}</p>
             </Card>
             <Card className="p-8 text-center hover:shadow-lg transition-shadow bg-gradient-to-br from-warning/5 to-accent/5 border-warning/20">
               <MapPin className="h-12 w-12 mx-auto mb-4 text-warning" />
-              <div className="text-4xl font-bold mb-2 text-warning">Millions</div>
-              <p className="text-muted-foreground">Struggle to access mental health support</p>
+              <div className="text-4xl font-bold mb-2 text-warning">{t.stat2Title}</div>
+              <p className="text-muted-foreground">{t.stat2Label}</p>
             </Card>
           </div>
         </div>
@@ -94,8 +101,8 @@ const Index = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-            <p className="text-lg text-muted-foreground">Simple, quick, and effective in 3 steps</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.howWorksTitle}</h2>
+            <p className="text-lg text-muted-foreground">{t.howWorksSubtitle}</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="p-8 hover:shadow-lg transition-all hover:-translate-y-1 bg-gradient-to-br from-primary/5 to-background">
@@ -105,9 +112,9 @@ const Index = () => {
               <div className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-4">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-3">Chat in Your Language</h3>
+              <h3 className="text-xl font-semibold mb-3">{t.step1Title}</h3>
               <p className="text-muted-foreground">
-                Choose from Hindi, Marathi, Telugu, Tamil, Bengali, or English for a comfortable conversation
+                {t.step1Desc}
               </p>
             </Card>
 
@@ -118,9 +125,9 @@ const Index = () => {
               <div className="bg-accent text-accent-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-4">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-3">Answer Simple Questions</h3>
+              <h3 className="text-xl font-semibold mb-3">{t.step2Title}</h3>
               <p className="text-muted-foreground">
-                Complete PHQ-9 and GAD-7 assessments in a conversational, guided format that's easy to understand
+                {t.step2Desc}
               </p>
             </Card>
 
@@ -131,9 +138,9 @@ const Index = () => {
               <div className="bg-secondary text-secondary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mb-4">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-3">Get Immediate Insights</h3>
+              <h3 className="text-xl font-semibold mb-3">{t.step3Title}</h3>
               <p className="text-muted-foreground">
-                Receive your risk-level assessment (Low, Moderate, High) with actionable next steps
+                {t.step3Desc}
               </p>
             </Card>
           </div>
@@ -144,38 +151,38 @@ const Index = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why It Matters</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.whyTitle}</h2>
             <p className="text-lg text-muted-foreground">
-              Accessible mental health screening for everyone
+              {t.whySubtitle}
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <CheckCircle2 className="h-10 w-10 mx-auto mb-4 text-success" />
-              <h3 className="font-semibold mb-2">Early Detection</h3>
+              <h3 className="font-semibold mb-2">{t.why1Title}</h3>
               <p className="text-sm text-muted-foreground">
-                Identify potential concerns before they escalate
+                {t.why1Desc}
               </p>
             </Card>
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <MapPin className="h-10 w-10 mx-auto mb-4 text-primary" />
-              <h3 className="font-semibold mb-2">Accessible Anywhere</h3>
+              <h3 className="font-semibold mb-2">{t.why2Title}</h3>
               <p className="text-sm text-muted-foreground">
-                Works on any device, even low-end phones
+                {t.why2Desc}
               </p>
             </Card>
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <DollarSign className="h-10 w-10 mx-auto mb-4 text-accent" />
-              <h3 className="font-semibold mb-2">Affordable for All</h3>
+              <h3 className="font-semibold mb-2">{t.why3Title}</h3>
               <p className="text-sm text-muted-foreground">
-                Low-cost solution for widespread accessibility
+                {t.why3Desc}
               </p>
             </Card>
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <Shield className="h-10 w-10 mx-auto mb-4 text-secondary" />
-              <h3 className="font-semibold mb-2">Clinically Aligned</h3>
+              <h3 className="font-semibold mb-2">{t.why4Title}</h3>
               <p className="text-sm text-muted-foreground">
-                Based on validated PHQ-9 and GAD-7 standards
+                {t.why4Desc}
               </p>
             </Card>
           </div>
@@ -188,14 +195,14 @@ const Index = () => {
         <div className="container mx-auto px-4 relative">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-3xl md:text-5xl font-bold">
-              Ready to Check Your Mental Health?
+              {t.ctaTitle}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Take the first step towards understanding your emotional wellbeing
+              {t.ctaSubtitle}
             </p>
             <Button asChild size="lg" className="rounded-full text-lg">
               <Link to="/chatbot">
-                Start Your Free Assessment <ArrowRight className="ml-2 h-5 w-5" />
+                {t.ctaButton} <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
