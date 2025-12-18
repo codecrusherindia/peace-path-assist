@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Chatbot from "./pages/Chatbot";
 import Features from "./pages/Features";
@@ -23,30 +24,32 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/business" element={<Business />} />
-          <Route path="/research" element={<Research />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/experts" element={<Experts />} />
-          <Route path="/exercise" element={<ExerciseDrill />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/api-demo" element={<ApiDemo />} />
-          <Route path="/corporate-demo" element={<CorporateDemo />} />
-          <Route path="/B2B-Dashboard-demo" element={<B2BDashboardDemo />} />
-          <Route path="/freemium-demo" element={<FreemiumDemo />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <LanguageProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/chatbot" element={<Chatbot />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/business" element={<Business />} />
+            <Route path="/research" element={<Research />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/experts" element={<Experts />} />
+            <Route path="/exercise" element={<ExerciseDrill />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/api-demo" element={<ApiDemo />} />
+            <Route path="/corporate-demo" element={<CorporateDemo />} />
+            <Route path="/B2B-Dashboard-demo" element={<B2BDashboardDemo />} />
+            <Route path="/freemium-demo" element={<FreemiumDemo />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 
