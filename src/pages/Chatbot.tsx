@@ -18,26 +18,14 @@ type Message = {
 
 type RiskLevel = "low" | "moderate" | "high" | null;
 
-const phq9Questions = [
-  "Over the last 2 weeks, how often have you been bothered by little interest or pleasure in doing things?",
-  "How often have you felt down, depressed, or hopeless?",
-  "How often have you had trouble falling or staying asleep, or sleeping too much?",
-  "How often have you felt tired or had little energy?",
-  "How often have you had poor appetite or been overeating?",
-  "How often have you felt bad about yourself - or that you are a failure?",
-  "How often have you had trouble concentrating on things?",
-  "How often have you been moving or speaking slowly, or been fidgety/restless?",
-  "Have you had thoughts that you would be better off dead, or of hurting yourself?"
+const phq9QuestionKeys = [
+  "phq9.q1", "phq9.q2", "phq9.q3", "phq9.q4", "phq9.q5",
+  "phq9.q6", "phq9.q7", "phq9.q8", "phq9.q9"
 ];
 
-const gad7Questions = [
-  "Over the last 2 weeks, how often have you felt nervous, anxious, or on edge?",
-  "How often have you not been able to stop or control worrying?",
-  "How often have you been worrying too much about different things?",
-  "How often have you had trouble relaxing?",
-  "How often have you been so restless that it's hard to sit still?",
-  "How often have you become easily annoyed or irritable?",
-  "How often have you felt afraid, as if something awful might happen?"
+const gad7QuestionKeys = [
+  "gad7.q1", "gad7.q2", "gad7.q3", "gad7.q4",
+  "gad7.q5", "gad7.q6", "gad7.q7"
 ];
 
 const wellnessExercises = [
@@ -73,6 +61,13 @@ const wellnessExercises = [
 
 const Chatbot = () => {
   const { t } = useLanguage();
+  
+  // Get translated questions
+  const phq9Questions = phq9QuestionKeys.map(key => t(key));
+  const gad7Questions = gad7QuestionKeys.map(key => t(key));
+  const allQuestions = [...phq9Questions, ...gad7Questions];
+  const totalQuestions = allQuestions.length;
+
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
@@ -87,9 +82,6 @@ const Chatbot = () => {
   const [selectedAction, setSelectedAction] = useState<"expert" | "exercises" | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
-  const allQuestions = [...phq9Questions, ...gad7Questions];
-  const totalQuestions = allQuestions.length;
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -139,9 +131,10 @@ const Chatbot = () => {
       setTimeout(() => {
         setCurrentQuestionIndex(0);
         setProgress(5);
+        const startMsg = t("chatbot.startMessage").replace("{total}", String(totalQuestions));
         const botMessage: Message = { 
           role: "bot", 
-          content: `Great! I'll ask you ${totalQuestions} questions. Please answer honestly - your responses are private.\n\n${allQuestions[0]}\n\nYou can respond with: Not at all, Several days, More than half the days, or Nearly every day.`
+          content: `${startMsg}\n\n${allQuestions[0]}\n\n${t("chatbot.responseOptions")}`
         };
         setMessages((prev) => [...prev, botMessage]);
       }, 800);
@@ -155,7 +148,7 @@ const Chatbot = () => {
         
         let prefix = "";
         if (nextIndex === phq9Questions.length) {
-          prefix = "Now let's assess your anxiety levels.\n\n";
+          prefix = `${t("chatbot.anxietySection")}\n\n`;
         }
         
         const botMessage: Message = { 
@@ -168,7 +161,7 @@ const Chatbot = () => {
       setTimeout(() => {
         const processingMessage: Message = { 
           role: "bot", 
-          content: "Thank you for completing the assessment. I'm analyzing your responses using our hybrid scoring model..."
+          content: t("chatbot.analyzing")
         };
         setMessages((prev) => [...prev, processingMessage]);
         
@@ -184,7 +177,7 @@ const Chatbot = () => {
       setTimeout(() => {
         const botMessage: Message = { 
           role: "bot", 
-          content: "Please type 'yes' or 'start' to begin the assessment, or ask me any questions about the process."
+          content: t("chatbot.startPrompt")
         };
         setMessages((prev) => [...prev, botMessage]);
       }, 500);
