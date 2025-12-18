@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Send, Languages, Download, AlertCircle, CheckCircle2, AlertTriangle, 
-  User, Dumbbell, Brain, Heart, Focus, Wind, LogIn, Mic, Volume2, VolumeX, Loader2 
+  Send, Languages, AlertCircle, CheckCircle2, AlertTriangle, 
+  User, Dumbbell, Brain, Heart, Focus, Wind, Mic, Volume2, VolumeX, Loader2 
 } from "lucide-react";
-import { Link } from "react-router-dom";
+// removed unused imports like Download, LogIn for cleaner code
 import { useLanguage } from "@/context/LanguageContext";
 import { translations, Language } from "@/data/translations";
 
@@ -21,7 +21,6 @@ type Message = {
 
 type RiskLevel = "low" | "moderate" | "high" | null;
 
-// Helper to get the correct BCP-47 language code for the browser
 const getVoiceLangCode = (lang: Language): string => {
   switch (lang) {
     case "Hindi": return "hi-IN";
@@ -29,36 +28,9 @@ const getVoiceLangCode = (lang: Language): string => {
     case "Bengali": return "bn-IN";
     case "Telugu": return "te-IN";
     case "Tamil": return "ta-IN";
-    default: return "en-IN"; // Default to Indian English
+    default: return "en-IN";
   }
 };
-
-const wellnessExercises = [
-  {
-    id: "focus",
-    icon: Focus,
-    title: "5-Minute Focus Drill",
-    description: "Improve concentration with simple attention exercises",
-  },
-  {
-    id: "box",
-    icon: Wind,
-    title: "Box Breathing",
-    description: "Reduce anxiety with controlled breathing",
-  },
-  {
-    id: "grounding",
-    icon: Brain,
-    title: "Grounding Exercise",
-    description: "5-4-3-2-1 technique for stress relief",
-  },
-  {
-    id: "muscle",
-    icon: Heart,
-    title: "Progressive Muscle Relaxation",
-    description: "Release physical tension",
-  }
-];
 
 const Chatbot = () => {
   const { language, setLanguage } = useLanguage();
@@ -67,7 +39,6 @@ const Chatbot = () => {
   const totalQuestions = questions.length;
   const languagesList: Language[] = ["English", "Hindi", "Marathi", "Bengali", "Telugu", "Tamil"];
 
-  // State
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [progress, setProgress] = useState(0);
@@ -76,136 +47,25 @@ const Chatbot = () => {
   const [showNextSteps, setShowNextSteps] = useState(false);
   const [selectedAction, setSelectedAction] = useState<"expert" | "exercises" | null>(null);
   
-  // Voice State
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false); // Toggle for Bot reading text
-  const [isListening, setIsListening] = useState(false); // State for Mic listening
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false); 
+  const [isListening, setIsListening] = useState(false); 
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // --- VOICE FUNCTIONS ---
+  // --- UPDATED: HANDLE SEND ---
+  // Now accepts an optional argument 'manualText' for voice input
+  const handleSend = (manualText?: string | any) => {
+    // If manualText is a string (from voice), use it. 
+    // Otherwise (from button click event), use the 'input' state.
+    const textToSend = typeof manualText === "string" ? manualText : input;
 
-  // 1. Text-to-Speech (Bot Speaks)
-  const speakText = (text: string) => {
-    if (!isVoiceEnabled) return;
+    if (!textToSend.trim()) return;
+
+    window.speechSynthesis.cancel(); 
     
-    // Cancel any current speaking to avoid overlap
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = getVoiceLangCode(language);
-    utterance.rate = 0.9; // Slightly slower for clarity
-    utterance.pitch = 1;
-    
-    window.speechSynthesis.speak(utterance);
-  };
-
-  // 2. Speech-to-Text (User Speaks)
-  const startListening = () => {
-    // 1. Check browser support
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-      alert("Your browser does not support voice input. Please use Google Chrome.");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = getVoiceLangCode(language);
-    
-    // --- CRITICAL FIX: Enable interim results ---
-    recognition.interimResults = true; 
-    recognition.maxAlternatives = 1;
-
-    setIsListening(true);
-
-    recognition.onstart = () => {
-      console.log("Mic started. Speak now...");
-    };
-
-    // We don't stop immediately on 'speechend' anymore to allow processing to finish
-    recognition.onspeechend = () => {
-      console.log("Speech stopped. Processing...");
-    };
-
-    recognition.onresult = (event: any) => {
-      // Loop through results to find the "final" transcript
-      let finalTranscript = "";
-      
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        }
-      }
-
-      // Only update input if we have a final sentence
-      if (finalTranscript) {
-        console.log("Heard Final:", finalTranscript);
-        setInput(finalTranscript);
-        recognition.stop(); 
-        setIsListening(false);
-      }
-    };
-
-    recognition.onerror = (event: any) => {
-      if (event.error === 'no-speech') {
-        console.warn("Microphone timed out (no speech detected).");
-        setIsListening(false);
-        return; 
-      }
-
-      console.error("Speech Error:", event.error);
-      setIsListening(false);
-      
-      if (event.error === 'not-allowed') {
-        alert("Microphone access denied. Please click the lock icon in your URL bar to allow microphone access.");
-      }
-    };
-
-    // 4. Start the engine
-    try {
-      recognition.start();
-    } catch (err) {
-      console.error("Recognition start error:", err);
-      setIsListening(false);
-    }
-  };
-
-  // --- EFFECTS ---
-
-  // Reset chat when language changes
-  useEffect(() => {
-    setMessages([
-      { role: "bot", content: `${t.welcome}\n\n${t.startPrompt}` },
-    ]);
-    if (currentQuestionIndex === -1) setInput("");
-    window.speechSynthesis.cancel(); // Stop speaking on lang change
-  }, [language, t.welcome, t.startPrompt]);
-
-  // Auto-scroll and Auto-speak latest bot message
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-
-    // If the last message is from the bot, read it out
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage && lastMessage.role === "bot") {
-      speakText(lastMessage.content);
-    }
-  }, [messages, isVoiceEnabled]); // Re-run if voice is toggled on/off
-
-  const calculateRiskLevel = (totalScore: number): RiskLevel => {
-    if (totalScore <= 9) return "low";
-    if (totalScore <= 19) return "moderate";
-    return "high";
-  };
-
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    window.speechSynthesis.cancel(); // Stop bot from talking if user interrupts
-    const userMessage: Message = { role: "user", content: input };
+    // Use 'textToSend' instead of 'input'
+    const userMessage: Message = { role: "user", content: textToSend };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
@@ -247,7 +107,97 @@ const Chatbot = () => {
     }
   };
 
-  // Helper for rendering badges...
+  const speakText = (text: string) => {
+    if (!isVoiceEnabled) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = getVoiceLangCode(language);
+    utterance.rate = 0.9; 
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // --- UPDATED: SPEECH RECOGNITION ---
+  const startListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      alert("Your browser does not support voice input. Please use Google Chrome.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = getVoiceLangCode(language);
+    recognition.interimResults = true; // Essential for preventing timeouts
+    recognition.maxAlternatives = 1;
+
+    setIsListening(true);
+
+    recognition.onstart = () => console.log("Mic started");
+    recognition.onspeechend = () => console.log("Speech stopped");
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = "";
+      
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+
+      if (finalTranscript) {
+        // Stop listening
+        recognition.stop();
+        setIsListening(false);
+        
+        // DIRECTLY SEND THE MESSAGE
+        handleSend(finalTranscript);
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      if (event.error === 'no-speech') {
+        setIsListening(false);
+        return; 
+      }
+      console.error("Speech Error:", event.error);
+      setIsListening(false);
+    };
+
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error("Recognition start error:", err);
+      setIsListening(false);
+    }
+  };
+
+  // --- EFFECTS ---
+
+  useEffect(() => {
+    setMessages([
+      { role: "bot", content: `${t.welcome}\n\n${t.startPrompt}` },
+    ]);
+    if (currentQuestionIndex === -1) setInput("");
+    window.speechSynthesis.cancel(); 
+  }, [language, t.welcome, t.startPrompt]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.role === "bot") {
+      speakText(lastMessage.content);
+    }
+  }, [messages, isVoiceEnabled]);
+
+  const calculateRiskLevel = (totalScore: number): RiskLevel => {
+    if (totalScore <= 9) return "low";
+    if (totalScore <= 19) return "moderate";
+    return "high";
+  };
+
   const getRiskBadge = () => {
     switch (riskLevel) {
       case "low": return <Badge className="bg-success text-success-foreground text-lg px-4 py-2"><CheckCircle2 className="mr-2 h-5 w-5" />{t.lowRisk}</Badge>;
@@ -269,7 +219,6 @@ const Chatbot = () => {
               <h1 className="text-3xl font-bold">{t.title}</h1>
               
               <div className="flex gap-2">
-                 {/* VOICE TOGGLE BUTTON */}
                 <Button 
                   variant="outline" 
                   size="icon" 
@@ -280,7 +229,6 @@ const Chatbot = () => {
                   {isVoiceEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
 
-                {/* Language Selector */}
                 <div className="relative">
                   <select
                     value={language}
@@ -342,15 +290,12 @@ const Chatbot = () => {
                   </div>
                 </Card>
               )}
-              {/* Expert & Exercise Views Omitted for brevity */}
               <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
             <div className="border-t p-4">
               <div className="flex gap-2">
-                
-                {/* MICROPHONE BUTTON */}
                 <Button 
                   variant={isListening ? "destructive" : "outline"} 
                   size="icon"
@@ -365,12 +310,13 @@ const Chatbot = () => {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                  onKeyPress={(e) => e.key === "Enter" && handleSend()} 
                   placeholder={isListening ? "Listening..." : t.typeResponse}
                   className="flex-1"
                   disabled={riskLevel !== null}
                 />
                 
+                {/* Note: We pass handleSend directly. The event object passed by onClick is handled safely inside. */}
                 <Button 
                   onClick={handleSend} 
                   disabled={!input.trim() || riskLevel !== null} 
