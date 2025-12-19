@@ -10,9 +10,9 @@ import {
   Send, Languages, AlertCircle, CheckCircle2, AlertTriangle, 
   User, Dumbbell, Brain, Heart, Focus, Wind, Mic, Volume2, VolumeX, Loader2 
 } from "lucide-react";
-// removed unused imports like Download, LogIn for cleaner code
 import { useLanguage } from "@/context/LanguageContext";
 import { translations, Language } from "@/data/translations";
+import { useNavigate } from "react-router-dom";
 
 type Message = {
   role: "bot" | "user";
@@ -33,6 +33,7 @@ const getVoiceLangCode = (lang: Language): string => {
 };
 
 const Chatbot = () => {
+  const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const t = translations[language].chatbot;
   const questions = translations[language].questions;
@@ -270,7 +271,7 @@ const Chatbot = () => {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-center">{t.nextSteps}</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <Card className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-primary/20 hover:border-primary" onClick={() => setSelectedAction("expert")}>
+                      <Card className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-primary/20 hover:border-primary" onClick={() => navigate("/experts")}>
                         <div className="flex flex-col items-center text-center space-y-3">
                           <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center"><User className="h-8 w-8 text-primary" /></div>
                           <h4 className="font-semibold">{t.connectExpert}</h4>
@@ -278,7 +279,7 @@ const Chatbot = () => {
                         </div>
                       </Card>
                       {(riskLevel === "low" || riskLevel === "moderate") && (
-                        <Card className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-accent/20 hover:border-accent" onClick={() => setSelectedAction("exercises")}>
+                        <Card className="p-6 cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-accent/20 hover:border-accent" onClick={() => navigate("/exercise")}>
                           <div className="flex flex-col items-center text-center space-y-3">
                             <div className="bg-accent/10 rounded-full w-16 h-16 flex items-center justify-center"><Dumbbell className="h-8 w-8 text-accent" /></div>
                             <h4 className="font-semibold">{t.wellness}</h4>
